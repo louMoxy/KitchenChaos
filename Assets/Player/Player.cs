@@ -35,6 +35,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     private void Start()
     {
         gameInput.OnInteractAction += GameInput_OnInteractAction;
+        gameInput.OnInteractAlternateAction += GameInput_OnInteractAlternateAction;
     }
 
     private void GameInput_OnInteractAction(object sender, EventArgs e)
@@ -42,6 +43,14 @@ public class Player : MonoBehaviour, IKitchenObjectParent
         if(selectedCounter != null )
         {
             selectedCounter.Interact(this);
+        }
+    }
+    
+    private void GameInput_OnInteractAlternateAction(object sender, EventArgs e)
+    {
+        if(selectedCounter != null )
+        {
+            selectedCounter.InteractAlternate(this);
         }
     }
 
@@ -118,17 +127,19 @@ public class Player : MonoBehaviour, IKitchenObjectParent
         {
             // attempt only x movement
             Vector3 moveDirX = new Vector3(moveDir.x, 0, 0).normalized;
-            canMove = CanMove(moveDirX, moveDistance);
+            canMove = moveDir.x != 0 && CanMove(moveDirX, moveDistance);
             if (canMove)
             {
+                // Can only move on the x
                 moveDir = moveDirX;
             }
             else
             {
                 Vector3 moveDirY = new Vector3(0, 0, moveDir.y).normalized;
-                canMove = CanMove(moveDirY, moveDistance);
+                canMove = moveDir.y != 0 && CanMove(moveDirY, moveDistance);
                 if (canMove)
                 {
+                    // Can only move on the x
                     moveDir = moveDirY;
                 }
             }

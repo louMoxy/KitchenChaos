@@ -253,7 +253,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   clearCounters: {fileID: 5982008876815472124}
-  visualGameObject: {fileID: 4341958345078968559}
+  visualGameObjects:
+  - {fileID: 4341958345078968559}
 --- !u!1001 &7963635970437523407
 PrefabInstance:
   m_ObjectHideFlags: 0
