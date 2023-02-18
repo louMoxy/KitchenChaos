@@ -181,6 +181,7 @@ GameObject:
   - component: {fileID: 5375463008206086766}
   - component: {fileID: 3975091818060630624}
   - component: {fileID: 8757882448469170776}
+  - component: {fileID: 2994059266985713405}
   m_Layer: 5
   m_Name: ProgressBarUI
   m_TagString: Untagged
@@ -195,7 +196,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5240100141897892566}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -285,6 +286,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   barImage: {fileID: 5281216833591269593}
   cuttingCounter: {fileID: -9169161761173575767}
+--- !u!114 &2994059266985713405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5240100141897892566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 700b5fa45ae80f64fab594f736ef8774, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mode: 2
 --- !u!1001 &1246381787043793528
 PrefabInstance:
   m_ObjectHideFlags: 0
