@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StoveCounter : BaseCounter
+public class StoveCounter : BaseCounter, IHasProgress
 {
     [SerializeField] FryingRecipeSO[] fryingRecipeSOs;
     [SerializeField] BurningRecipeSO[] burningRecipeSOs;
@@ -12,8 +13,14 @@ public class StoveCounter : BaseCounter
     FryingRecipeSO fryingRecipeSO;
     BurningRecipeSO burningRecipeSO;
 
+    public event EventHandler<IHasProgress.OnPublicChangesEventsArgs> OnProgressChanged;
+    public event EventHandler<OnStateChangedEventArgs> OnStateChanged;
+    public class OnStateChangedEventArgs: EventArgs
+    {
+        public State state;
+    }
 
-    enum State
+    public enum State
     {
         Idle, 
         Frying,
@@ -38,6 +45,9 @@ public class StoveCounter : BaseCounter
                     break;
                 case State.Frying:
                     fryingTimer += Time.deltaTime;
+                    OnProgressChanged?.Invoke(this, new IHasProgress.OnPublicChangesEventsArgs { progressNormalised = fryingTimer / fryingRecipeSO.fryingTimerMax });
+
+
                     if (fryingTimer > fryingRecipeSO.fryingTimerMax)
                     {
                         // Fried
@@ -47,12 +57,15 @@ public class StoveCounter : BaseCounter
                         KitchenObject.SpawnKitchenObject(fryingRecipeSO.output, this);
 
                         state = State.Fried;
+                        OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = state });
                         burningTimer = 0;
-;                        burningRecipeSO = GetBurningRecipeSO(GetKitchenObject().GetKitchenObjectSO());
+;                       burningRecipeSO = GetBurningRecipeSO(GetKitchenObject().GetKitchenObjectSO());
                     }
                     break;
                 case State.Fried:
                     burningTimer += Time.deltaTime;
+                    OnProgressChanged?.Invoke(this, new IHasProgress.OnPublicChangesEventsArgs { progressNormalised = burningTimer / burningRecipeSO.burningTimerMax });
+
                     if (burningTimer > burningRecipeSO.burningTimerMax)
                     {
                         // Burnt
@@ -62,6 +75,8 @@ public class StoveCounter : BaseCounter
                         KitchenObject.SpawnKitchenObject(burningRecipeSO.output, this);
                         burningRecipeSO = GetBurningRecipeSO(burningRecipeSO.input);
                         state = State.Burned;
+                        OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = state });
+                        OnProgressChanged?.Invoke(this, new IHasProgress.OnPublicChangesEventsArgs { progressNormalised = 0 });
                     }
                     break;
                 case State.Burned:
@@ -75,7 +90,9 @@ public class StoveCounter : BaseCounter
         if (!HasKitchenObject())
         {
             state = State.Frying;
+            OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = state });
             fryingTimer = 0;
+
             if (player.HasKitchenObject())
             {
                 // Check if its an item which can be cut
@@ -83,6 +100,8 @@ public class StoveCounter : BaseCounter
                 {
                     player.GetKitchenObject().SetKitchenObjectParent(this);
                     fryingRecipeSO = GetFryingRecipeSO(GetKitchenObject().GetKitchenObjectSO());
+                    OnProgressChanged?.Invoke(this, new IHasProgress.OnPublicChangesEventsArgs { progressNormalised = fryingTimer / fryingRecipeSO.fryingTimerMax });
+
                 }
             }
         }
@@ -91,6 +110,11 @@ public class StoveCounter : BaseCounter
             if (!player.HasKitchenObject())
             {
                 GetKitchenObject().SetKitchenObjectParent(player);
+
+                state = State.Idle;
+                OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = state });
+                OnProgressChanged?.Invoke(this, new IHasProgress.OnPublicChangesEventsArgs { progressNormalised = 0 });
+
             }
         }
     }
