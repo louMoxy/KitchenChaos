@@ -6,11 +6,16 @@ public class SoundManager : MonoBehaviour
 {
     public static SoundManager Instance { get; private set; }
 
+    const string PLAYER_PREF_SOUND_EFFECT_VOLUME = "sound_effects";
+
     [SerializeField] AudioClipRefSO audioClipRef;
+
+    private float volume = 1f;
 
     private void Awake()
     {
         Instance = this;
+        volume = PlayerPrefs.GetFloat(PLAYER_PREF_SOUND_EFFECT_VOLUME, 1f);
     }
 
     private void Start()
@@ -62,13 +67,30 @@ public class SoundManager : MonoBehaviour
         PlaySound(clips[Random.Range(0, clips.Length)], position, volume);
     }
 
-    void PlaySound(AudioClip clip, Vector3 position, float volume = 1f)
+    void PlaySound(AudioClip clip, Vector3 position, float volumeMultiplier = 1f)
     {
-        AudioSource.PlayClipAtPoint(clip, position, volume);
+        AudioSource.PlayClipAtPoint(clip, position, volume * volumeMultiplier);
     }
 
     public void PlayFootstepSound(Vector3 position, float volume)
     {
         PlaySound(audioClipRef.footsteps, position, volume);
+    }
+
+    public void ChangeVolume()
+    {
+        volume += .1f;
+        if(volume > 1f)
+        {
+            volume = 0f;
+        }
+
+        PlayerPrefs.SetFloat(PLAYER_PREF_SOUND_EFFECT_VOLUME, volume);
+        PlayerPrefs.Save();
+    }
+
+    public float GetVolume()
+    {
+        return volume;
     }
 }
